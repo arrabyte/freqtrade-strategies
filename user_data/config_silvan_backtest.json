@@ -6,7 +6,8 @@
     "fiat_display_currency": "USD",
     "dry_run": true,
     "timeframe": "4h",
-    "trading_mode": "spot",
+    "trading_mode": "futures",
+    "margin_mode": "isolated",
     "cancel_open_orders_on_exit": false,
     "unfilledtimeout": {
         "entry": 10,
@@ -19,14 +20,14 @@
         "ccxt_config": {},
         "ccxt_async_config": {},
         "pair_whitelist": [
-            "XRP/USDT",
-            "BNB/USDT",
-            "SOL/USDT",
-            "TRX/USDT",
-            "DOGE/USDT",
-            "ADA/USDT",
-            "LINK/USDT",
-            "AVAX/USDT"
+            "XRP/USDT:USDT",
+            "BNB/USDT:USDT",
+            "SOL/USDT:USDT",
+            "TRX/USDT:USDT",
+            "DOGE/USDT:USDT",
+            "ADA/USDT:USDT",
+            "LINK/USDT:USDT",
+            "AVAX/USDT:USDT"
         ],
         "pair_blacklist": []
     },

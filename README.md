@@ -15,19 +15,24 @@ published for subscribers on Substack.
 
 ### SilvanStrategy
 
-Trend + mean-reversion hybrid, six indicators combined, hyperopted directly
-on the reported backtest period. **Educational example — read the breakdown
-below before drawing any conclusion from these numbers.**
+Long+short trend/mean-reversion hybrid on Binance USDT-margined perpetuals,
+with a BTC-based regime filter, hyperopted directly on the reported backtest
+period. **Educational example — read the breakdown below before drawing any
+conclusion from these numbers.**
 
 ![SilvanStrategy equity curve](assets/silvan_equity.png)
 
 | Metric | Value |
 |---|---|
-| Period | 2018 – 2026 (backtest) |
-| Total profit | +178% |
-| Win rate | 63.8% |
-| Sharpe (daily) | 0.84 |
-| Max drawdown | 31.8% |
+| Period | 2020 – 2026 (backtest) |
+| Total profit | +983% |
+| Win rate | 68.3% |
+| Sharpe (daily) | 1.48 |
+| Calmar | 28.16 |
+| Max drawdown | 28.1% |
+
+A Calmar ratio above ~2-3 is already a red flag for a real strategy. 28.16 is
+not an edge, it's a tell — see the walk-forward check below.
 
 Code: [`user_data/strategies/SilvanStrategy.py`](user_data/strategies/SilvanStrategy.py)
 
@@ -70,41 +75,54 @@ Named after [Silvan](https://it.wikipedia.org/wiki/Silvan_(illusionista)),
 the famous Italian illusionist — because everything impressive about this
 strategy's backtest is a trick, not an edge.
 
-It deliberately commits three classic sins that make a huge share of public
+It deliberately commits five classic sins that make a huge share of public
 freqtrade strategies look amazing on paper and lose money live:
 
 1. **Survivorship bias** — [`config_silvan_backtest.json`](user_data/config_silvan_backtest.json)
-   pins a static pairlist of coins that are big-cap winners *today*
-   (XRP, BNB, SOL, TRX, DOGE, ADA, LINK, AVAX — BTC/ETH excluded on purpose,
-   they're too obvious a case), replayed as far back as 2018: several of
-   these coins didn't even exist yet and enter the backtest already at their
-   post-listing pump, with no bear market beforehand to filter them out.
+   pins a static pairlist of USDT-margined perpetuals on coins that are
+   big-cap winners *today* (XRP, BNB, SOL, TRX, DOGE, ADA, LINK, AVAX — BTC
+   and ETH are deliberately excluded from trading, too obvious a case).
+   Most of these perpetual markets only launched in 2020, so the backtest
+   starts there — coins only enter once they're already big enough to have
+   a liquid futures market.
 2. **Curve-fitted parameters** — every threshold was hyperopted with
-   `SharpeHyperOptLoss` directly on the exact 2018-2026 timerange the
+   `ProfitDrawDownHyperOptLoss` directly on the exact 2018-2026 timerange the
    headline results above are reported on. No train/test split, no
    walk-forward, no out-of-sample check.
 3. **Indicator overload** — six barely-related indicators combined until the
    equity curve looked right, with no economic rationale for why they
    belong together.
+4. **Patched weak spot** — the short leg exists for one reason only: the
+   long-only version had a real drawdown in the 2022-2023 bear market.
+   Instead of accepting that as an honest result, a mirror-image short side
+   was bolted on and hyperopted on the very same stretch it's meant to fix.
+5. **Hindsight-tuned regime filter** — BTC price vs. its own EMA gates which
+   side is allowed to trade, and the EMA length is hyperopted on the same
+   period too. BTC itself is never traded, only used as a filter that
+   "happens" to know in advance when each regime turns — impossible in real
+   time.
 
 **Walk-forward reality check**
 
-The headline numbers above (+178%, Sharpe 0.84) come from hyperopting on the
-entire 2018-2026 window and reporting the result on that same window — sin
-#2. Here's what happens with an honest split: hyperopt only on 2018-2023,
-freeze the parameters, run them unmodified on 2023-2026 (data the optimizer
-never saw).
+The headline numbers above (+983%, Calmar 28.16) come from hyperopting on
+the entire 2018-2026 window and reporting the result on that same window —
+sin #2. Here's what happens with an honest split: hyperopt only on
+2018-2023, freeze the parameters, run them unmodified on 2023-2026 (data the
+optimizer never saw).
 
 ![Walk-forward reality check](assets/silvan_walkforward.png)
 
 | | In-sample (2018-2023) | Out-of-sample (2023-2026) |
 |---|---|---|
-| Total profit | +96.84% | +13.50% |
-| CAGR | 14.79% | 3.50% |
-| Sharpe (daily) | 0.91 | 0.33 |
+| Total profit | +699.79% | +14.11% |
+| CAGR | 105.03% | 3.65% |
+| Calmar | 68.63 | 0.44 |
+| Max drawdown | 19.6% | 43.1% |
 
 Same strategy, same code, same "optimal" parameters — just not re-fit on the
-data being tested. That's the difference between a backtest and a strategy.
+data being tested. Out of sample, the returns collapse *and* the drawdown
+gets worse, not better. That's the difference between a backtest and a
+strategy.
 
 Reproduce it yourself:
 
