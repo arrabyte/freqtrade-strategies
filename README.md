@@ -102,6 +102,48 @@ freqtrade strategies look amazing on paper and lose money live:
    "happens" to know in advance when each regime turns — impossible in real
    time.
 
+**Parameter fragility: a cliff, not a plateau**
+
+If curve-fitting had produced anything resembling a real edge, nearby
+parameter values would perform similarly — a broad, gently-sloping plateau.
+Holding every other hyperopted parameter fixed at its "optimal" value and
+sweeping just `stoploss` and `trailing_stop_positive` on a grid:
+
+![Parameter heatmap](assets/silvan_param_heatmap.png)
+
+At `trailing_stop_positive = 0.01` (the optimizer landed on 0.013), total
+profit ranges 738–1333% depending on `stoploss`. Nudge `trailing_stop_positive`
+one notch to 0.03 — barely a change — and it collapses to 194–477%, a drop
+of 60-85%, before drifting back up further out. That's not an edge that
+happens to sit at 0.013, it's a narrow lucky corridor the optimizer found by
+trying enough combinations against the same data it's graded on.
+
+For contrast, not every parameter behaves this way: `regime_ma_len` and
+`rsi_buy`, swept the same way, produce a much smoother surface — worth
+noting because "the parameters aren't sensitive" is sometimes used as a
+defense against overfitting, and it would have been a weak one here. Some
+parameters were robust, and the strategy was still worthless out of sample
+(see the walk-forward check below). Smoothness in one slice proves nothing
+about the whole space.
+
+**A sin we didn't include: look-ahead bias**
+
+The five biases above are the "boring", realistic kind — they read like
+ordinary strategy-building mistakes, not bugs. There's a more severe, more
+common one left out on purpose: look-ahead bias, where the backtest engine
+accidentally lets the strategy see data from the future — a custom indicator
+computed with a centered rolling window, an informative pair merged without
+the delay it would have in real time, a negative `.shift()`. Freqtrade
+guards against the obvious cases, but it's easy to reintroduce with custom
+indicators or informative pairs.
+
+Look-ahead bias is why some of the "backtest screenshots" floating around
+show five- or six-digit percentage returns with near-zero drawdown — numbers
+that aren't just optimistic, they're logically impossible in real trading,
+because the strategy is trading on information that doesn't exist yet.
+SilvanStrategy is kept free of it deliberately: +983% is what curve-fitting
+alone can produce, without cheating on time.
+
 **Walk-forward reality check**
 
 The headline numbers above (+983%, Calmar 28.16) come from hyperopting on

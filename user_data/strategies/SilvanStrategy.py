@@ -33,6 +33,14 @@ Sins deliberately committed here (see repo README for the full writeup):
      see every top and bottom in the data. A filter that "happens" to flip
      right before each regime change only works looking backwards.
 
+Not included here (on purpose): look-ahead bias — a bug, not a modelling
+choice, where the strategy sees data that wouldn't exist yet in live
+trading (a centered rolling window, an informative pair merged without the
+delay it would have in real time). It's the more severe, more common sin
+behind results that aren't just optimistic but logically impossible. See
+the README for what it looks like and why every bias here was kept plausible
+instead.
+
 Copyright (c) 2026 Alessandro Arrabito. Licensed under the MIT License, see
 LICENSE in the repository root.
 """
