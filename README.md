@@ -102,29 +102,32 @@ freqtrade strategies look amazing on paper and lose money live:
    "happens" to know in advance when each regime turns — impossible in real
    time.
 
-**Parameter fragility: a cliff, not a plateau**
+**Parameter fragility: a peak, not a slope**
 
 If curve-fitting had produced anything resembling a real edge, nearby
 parameter values would perform similarly — a broad, gently-sloping plateau.
 Holding every other hyperopted parameter fixed at its "optimal" value and
-sweeping just `stoploss` and `trailing_stop_positive` on a grid:
+sweeping `adx_threshold` and `bb_std` on a grid:
 
 ![Parameter heatmap](assets/silvan_param_heatmap.png)
 
-At `trailing_stop_positive = 0.01` (the optimizer landed on 0.013), total
-profit ranges 738–1333% depending on `stoploss`. Nudge `trailing_stop_positive`
-one notch to 0.03 — barely a change — and it collapses to 194–477%, a drop
-of 60-85%, before drifting back up further out. That's not an edge that
-happens to sit at 0.013, it's a narrow lucky corridor the optimizer found by
-trying enough combinations against the same data it's graded on.
+Profit rises from 47% at `adx_threshold=15` to a peak of 982% at exactly
+`adx_threshold=27` — the value the optimizer landed on — then falls back to
+298–472% at `adx_threshold=33`, just 6 units away in either direction.
+There's no economic reason "strong enough trend" should mean ADX above 27
+specifically rather than 24 or 30; the peak sits there because that's what
+this particular six-year window happened to reward.
 
-For contrast, not every parameter behaves this way: `regime_ma_len` and
-`rsi_buy`, swept the same way, produce a much smoother surface — worth
-noting because "the parameters aren't sensitive" is sometimes used as a
-defense against overfitting, and it would have been a weak one here. Some
-parameters were robust, and the strategy was still worthless out of sample
-(see the walk-forward check below). Smoothness in one slice proves nothing
-about the whole space.
+Not every parameter behaves this way: `regime_ma_len`, `rsi_buy`, and the
+two moving-average lengths, swept the same way, produce much smoother
+surfaces (`stoploss` and `trailing_stop_positive` show a real cliff too, but
+in a direction with a plausible risk-management story — wider stops survive
+crypto's violent pullbacks — so it's a weaker example of pure overfitting).
+That's worth flagging, because "the parameters aren't sensitive" is
+sometimes used as a defense against overfitting, and for those it would
+have been true. It just doesn't generalize: some parameters were robust and
+the strategy was still worthless out of sample (see the walk-forward check
+below). Smoothness in one slice proves nothing about the whole space.
 
 **A sin we didn't include: look-ahead bias**
 
