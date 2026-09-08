@@ -151,22 +151,27 @@ alone can produce, without cheating on time.
 
 The headline numbers above (+983%, Calmar 28.16) come from hyperopting on
 the entire 2018-2026 window and reporting the result on that same window —
-sin #2. Here's what happens with an honest split: hyperopt only on
-2018-2023, freeze the parameters, run them unmodified on 2023-2026 (data the
-optimizer never saw).
+sin #2. Here's what happens with an honest split: hyperopt only on the
+training slice, freeze the parameters, run them unmodified on the rest
+(data the optimizer never saw).
+
+A single split invites an obvious objection: maybe the test window just
+happened to be an unlucky period, unrelated to overfitting. So this is
+repeated with three independent, non-overlapping cut points instead of one:
 
 ![Walk-forward reality check](assets/silvan_walkforward.png)
 
-| | In-sample (2018-2023) | Out-of-sample (2023-2026) |
-|---|---|---|
-| Total profit | +699.79% | +14.11% |
-| CAGR | 105.03% | 3.65% |
-| Calmar | 68.63 | 0.44 |
-| Max drawdown | 19.6% | 43.1% |
+| Split | In-sample CAGR | Out-of-sample CAGR | In-sample Calmar | Out-of-sample Calmar |
+|---|---|---|---|---|
+| A — train 2018-2023, test 2023-2026 | 105.03% | 3.65% | 68.63 | 0.44 |
+| B — train 2018-2024, test 2024-2026 | 35.35% | **-13.61%** | 15.91 | **-1.28** |
+| C — train 2018-2022, test 2022-2026 | 107.40% | 4.60% | 77.87 | 0.48 |
 
-Same strategy, same code, same "optimal" parameters — just not re-fit on the
-data being tested. Out of sample, the returns collapse *and* the drawdown
-gets worse, not better. That's the difference between a backtest and a
+Same strategy, same code, same procedure every time — three different cut
+points, three different market regimes in the test windows, and the same
+collapse every single time. One split even loses money outright. This isn't
+one unlucky test window, it's what happens whenever this strategy meets
+data it wasn't fit on. That's the difference between a backtest and a
 strategy.
 
 Reproduce it yourself:
