@@ -183,6 +183,12 @@ freqtrade backtesting \
   --timerange 20180101-20260906
 ```
 
+Or skip re-downloading data and re-running hyperopt entirely:
+[`user_data/notebooks/SilvanStrategy_analysis.ipynb`](user_data/notebooks/SilvanStrategy_analysis.ipynb)
+loads the frozen backtest results checked into this repo (`user_data/notebooks/data/`) and reproduces
+every chart and number in this README and in the article deterministically — same result every time,
+no exchange API required.
+
 The full breakdown of why each of these biases makes the numbers meaningless
 — and what a walk-forward, point-in-time-correct backtest looks like instead
 — will be in an upcoming article on **[Backtests, not Signals](https://backtestsnotsignals.substack.com)**
