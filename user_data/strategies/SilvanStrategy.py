@@ -7,8 +7,7 @@ Named after Silvan, the famous Italian illusionist — because everything
 impressive about this strategy's backtest is a trick, not an edge.
 
 Full breakdown of every bias baked into this file and why it would fail
-in live trading: https://backtestsnotsignals.substack.com (article to be
-linked here once published)
+in live trading: https://backtestsnotsignals.substack.com/p/freqtrade-strategy-983-in-6-years
 
 Sins deliberately committed here (see repo README for the full writeup):
   1. Survivorship bias — config_silvan_backtest.json pins a static pairlist

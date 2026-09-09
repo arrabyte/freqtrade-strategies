@@ -191,8 +191,8 @@ no exchange API required.
 
 The full breakdown of why each of these biases makes the numbers meaningless
 — and what a walk-forward, point-in-time-correct backtest looks like instead
-— will be in an upcoming article on **[Backtests, not Signals](https://backtestsnotsignals.substack.com)**
-(link added here once published).
+— is in the article: **["Freqtrade Strategy: +983% in 6 Years (Full Free Strategy Inside)"](https://backtestsnotsignals.substack.com/p/freqtrade-strategy-983-in-6-years)**
+on [Backtests, not Signals](https://backtestsnotsignals.substack.com).
 
 ## Subscribe
 
